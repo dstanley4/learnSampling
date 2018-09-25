@@ -1,0 +1,91 @@
+
+#' Calculate a number of sample correlations based on a specified population correlation
+#' @param pop.r Population correlation. Do not use pop.data is you provide this value.
+#' @param n Sample size for all samples If you use n, do not use n.min or n.max.
+#' @param number.of.samples Number of samples to obtain
+#' @param number.of.decimals Number of decimals to report in returned data frame
+#' @return Data frame with sample correlations
+#' @examples
+#' get_r_samples(pop.r = .35,n=100)
+#' @export
+get_r_samples <- function(pop.r = NA, n, number.of.samples = 10, number.of.decimals = 3) {
+
+     Sigma <- diag(2)
+     Sigma[1,2] <- pop.r
+     Sigma[2,1] <- pop.r
+     mu <- c(0,0)
+     K <- number.of.samples
+     data_samples <- get_true_scores_with_sampling_error_cov(Sigma, mu, n, K)
+
+     rs <- rep(NA,number.of.samples)
+     dfs <- rep(NA,number.of.samples)
+     ts <- rep(NA,number.of.samples)
+     in_interval <- rep(NA, number.of.samples)
+     ps <- rep(NA,number.of.samples)
+     LLs <- rep(NA,number.of.samples)
+     ULs <- rep(NA,number.of.samples)
+     for (i in 1:number.of.samples) {
+          x <- data_samples$x_true[,i]
+          y <- data_samples$y_true[,i]
+          r_info <- stats::cor.test(x,y)
+          rs[i] <- round(r_info$estimate,number.of.decimals)
+          LLs[i] <- round(r_info$conf.int[1],number.of.decimals)
+          ULs[i] <- round(r_info$conf.int[2],number.of.decimals)
+          in_interval[i] <- is_value_in_interval(pop.r, c(r_info$conf.int[1], r_info$conf.int[2]))
+          ts[i] <- round(r_info$statistic,number.of.decimals)
+          dfs[i] <- round(r_info$parameter,number.of.decimals)
+          ps[i] <- round(r_info$p.value,5)
+     }
+     xx<-1:number.of.samples
+     sample.number <- xx
+     data.out <- data.frame(sample.number,n = n, r =  rs, LL = LLs, UL = ULs, ci.captured.pop.r = in_interval, t = ts, df = dfs, p = ps)
+     rownames(data.out) <- NULL
+
+     return(data.out)
+}
+
+
+
+get_true_scores_with_sampling_error_cov <- function(Sigma, mu, n, K) {
+     # This is the MASS::mvrnorm routine structured to eliminate
+     # redundant calculations when repeated K times
+
+     #Matrix approach for fast bivariate simulations
+
+     p <- length(mu)
+     eS <- eigen(Sigma, symmetric = TRUE)
+     ev <- eS$values
+
+     Xmulti <-  eS$vectors %*% diag(sqrt(pmax(ev, 0)), p)
+
+     xs <- matrix(NA,n,K)
+     ys <- matrix(NA,n,K)
+     for (i in 1:K) {
+          X <- matrix(rnorm(p * n), n)
+          X2 <- Xmulti %*% t(X)
+          X2 <- t(X2)
+          xs[,i] <- X2[,1]
+          ys[,i] <- X2[,2]
+     }
+
+     output <- list()
+     output$x_true <- xs
+     output$y_true <- ys
+     return(output)
+}
+
+
+is_value_in_interval <- function(value,interval) {
+        is_in_interval <- FALSE
+        check_interval<-findInterval(value,sort(interval),rightmost.closed = TRUE)
+        if (check_interval==1) {
+                is_in_interval <- TRUE
+        }
+        return(is_in_interval)
+}
+
+
+#'@export
+percent_true <- function(x) {
+     return((sum(x)/length(x))*100)
+}
