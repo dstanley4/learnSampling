@@ -38,7 +38,7 @@ get_M_samples <- function(pop.M = NA, pop.SD = NA, n, number.of.samples = 10, nu
      }
      xx<-1:number.of.samples
      sample.number <- xx
-     data.out <- data.frame(sample.number, n = n, M = Ms, LL = LLs, UL = ULs, ci.captured.pop.M = in_interval, SD_n = SDsN, SD_n_1 = SDs, Var_n = VARsN, Var_n_1 = VARs, est.SE = SEs)
+     data.out <- data.frame(sample.number, pop.M = pop.M, pop.SD = pop.SD, n = n, M = Ms, LL = LLs, UL = ULs, ci.captured.pop.M = in_interval, SD_n = SDsN, SD_n_1 = SDs, Var_n = VARsN, Var_n_1 = VARs, est.SE = SEs)
      rownames(data.out) <- NULL
      return(data.out)
 }

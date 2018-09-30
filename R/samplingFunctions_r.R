@@ -38,7 +38,7 @@ get_r_samples <- function(pop.r = NA, n, number.of.samples = 10, number.of.decim
      }
      xx<-1:number.of.samples
      sample.number <- xx
-     data.out <- data.frame(sample.number,n = n, r =  rs, LL = LLs, UL = ULs, ci.captured.pop.r = in_interval, t = ts, df = dfs, p = ps)
+     data.out <- data.frame(sample.number, pop.r = pop.r, n = n, r =  rs, LL = LLs, UL = ULs, ci.captured.pop.r = in_interval, t = ts, df = dfs, p = ps)
      rownames(data.out) <- NULL
 
      return(data.out)

@@ -61,7 +61,7 @@ get_d_samples <- function(pop.d = NA, cell.n = NA, cell1.n = NA, cell2.n = NA, n
      }
      xx<-1:number.of.samples
      sample.number <- xx
-     data.out <- data.frame(sample.number, cell1.n = cell1.n, cell2.n = cell2.n, d = ds, LL = LLs, UL = ULs, ci.captured.pop.d = in_interval, t = ts, df = dfs, p = ps)
+     data.out <- data.frame(sample.number, pop.d = pop.d, cell1.n = cell1.n, cell2.n = cell2.n, d = ds, LL = LLs, UL = ULs, ci.captured.pop.d = in_interval, t = ts, df = dfs, p = ps)
      rownames(data.out) <- NULL
 
      return(data.out)
