@@ -25,5 +25,5 @@ Data frame with sample d-values
 Calculate a number of sample d-values (unbiased) based on a specified (infinite) population correlation.
 }
 \examples{
-get_M_samples(pop.d = .35, cell.n = 100)
+get_M_samples(pop.M = 100, pop.SD = 15, n = 100)
 }

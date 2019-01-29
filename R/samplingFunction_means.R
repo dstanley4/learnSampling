@@ -6,7 +6,7 @@
 #' @param number.of.decimals Number of decimals to report in returned data frame
 #' @return Data frame with sample d-values
 #' @examples
-#' get_M_samples(pop.d = .35, cell.n = 100)
+#' get_M_samples(pop.M = 100, pop.SD = 15, n = 100)
 #' @export
 get_M_samples <- function(pop.M = NA, pop.SD = NA, n, number.of.samples = 10, number.of.decimals = 2) {
 

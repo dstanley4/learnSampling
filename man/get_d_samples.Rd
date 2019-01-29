@@ -4,18 +4,14 @@
 \alias{get_d_samples}
 \title{Calculate a number of sample d-values (unbiased) based on a specified (infinite) population correlation.}
 \usage{
-get_d_samples(pop.d = NA, cell.n = NA, cell1.n = NA, cell2.n = NA,
-  number.of.samples = 10, number.of.decimals = 3, var.equal = TRUE,
+get_d_samples(pop.d = NA, cell.n = NA, number.of.samples = 10,
+  number.of.decimals = 3, var.equal = TRUE,
   alternative = "two.sided")
 }
 \arguments{
 \item{pop.d}{Population d-value}
 
-\item{cell.n}{Cell size for both cells for all samples.}
-
-\item{cell1.n}{Cell size group 1. If you use this argument do not use cell.n}
-
-\item{cell2.n}{Cell size group 2. If you use this argument do not use cell.n}
+\item{cell.n}{Cell size for both cells for all samples. If you use two values (e.g., c(20, 40), these represent -3/+3 SD for variable sample sizes}
 
 \item{number.of.samples}{Number of samples to obtain}
 

@@ -1,8 +1,6 @@
 #' Calculate a number of sample d-values (unbiased) based on a specified (infinite) population correlation.
 #' @param pop.d Population d-value
-#' @param cell.n Cell size for both cells for all samples.
-#' @param cell1.n Cell size group 1. If you use this argument do not use cell.n
-#' @param cell2.n Cell size group 2. If you use this argument do not use cell.n
+#' @param cell.n Cell size for both cells for all samples. If you use two values (e.g., c(20, 40), these represent -3/+3 SD for variable sample sizes
 #' @param number.of.samples Number of samples to obtain
 #' @param number.of.decimals Number of decimals to report in returned data frame
 #' @param var.equal TRUE/FALSE indicate type of t-test to use
@@ -11,26 +9,23 @@
 #' @examples
 #' get_d_samples(pop.d = .35, cell.n = 100)
 #' @export
-get_d_samples <- function(pop.d = NA, cell.n = NA, cell1.n = NA, cell2.n = NA, number.of.samples = 10, number.of.decimals = 3, var.equal = TRUE, alternative = "two.sided") {
+get_d_samples <- function(pop.d = NA, cell.n = NA, number.of.samples = 10, number.of.decimals = 3, var.equal = TRUE, alternative = "two.sided") {
 
      if (is.na(pop.d)) {return()}
 
-     if (is.na(cell1.n)) {
-             if (!is.na(cell.n)) {
-                cell1.n <- cell.n
-             } else {
-                     return()
-             }
-     }
-     if (is.na(cell2.n)) {
-        if (!is.na(cell.n)) {
-                cell2.n <- cell.n
-        } else {
-                return()
-        }
-     }
 
-
+     if (length(cell.n) == 1) {
+          ns.for.cell1 = rep(cell.n, number.of.samples)
+          ns.for.cell2 = rep(cell.n, number.of.samples)
+     } else {
+          cell.n <- sort(cell.n)
+          cell.min <- cell.n[1]
+          cell.max <- cell.n[2]
+          cell.sd <- (cell.max  - cell.min) / 6
+          cell.mean <- mean(cell.min, cell.max)
+          ns.for.cell1 = abs(round(rnorm(mean = cell.mean, sd = cell.sd, n = number.of.samples)))
+          ns.for.cell2 = ns.for.cell1
+     }
 
 
      dfs <- rep(NA,number.of.samples)
@@ -43,6 +38,9 @@ get_d_samples <- function(pop.d = NA, cell.n = NA, cell1.n = NA, cell2.n = NA, n
      in_interval <- rep(NA,number.of.samples)
 
      for (i in 1:number.of.samples) {
+          cell1.n <- ns.for.cell1[i]
+          cell2.n <- ns.for.cell2[i]
+
           group1.data <- rnorm(cell1.n) + pop.d
           group2.data <- rnorm(cell2.n)
           tout <- t.test(group1.data, group2.data, var.equal = var.equal, alternative = alternative)
@@ -61,7 +59,7 @@ get_d_samples <- function(pop.d = NA, cell.n = NA, cell1.n = NA, cell2.n = NA, n
      }
      xx<-1:number.of.samples
      sample.number <- xx
-     data.out <- data.frame(sample.number, pop.d = pop.d, cell1.n = cell1.n, cell2.n = cell2.n, d = ds, LL = LLs, UL = ULs, ci.captured.pop.d = in_interval, t = ts, df = dfs, p = ps)
+     data.out <- data.frame(sample.number, pop.d = pop.d, cell1.n = ns.for.cell1, cell2.n = ns.for.cell2, d = ds, LL = LLs, UL = ULs, ci.captured.pop.d = in_interval, t = ts, df = dfs, p = ps)
      rownames(data.out) <- NULL
 
      return(data.out)

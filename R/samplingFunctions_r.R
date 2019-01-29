@@ -1,3 +1,55 @@
+#' Calculate a number of sample correlations based on a specified population correlation
+#' @param data Population data - first two columns used for population correlation rho.
+#' @param n Sample size for all samples If you use n, do not use n.min or n.max.
+#' @param number.of.samples Number of samples to obtain
+#' @param number.of.decimals Number of decimals to report in returned data frame
+#' @return Data frame with sample correlations
+#' @export
+get_r_samples_from_population_data <- function(data = NA, n, number.of.samples = 10, number.of.decimals = 3) {
+     rs <- rep(NA,number.of.samples)
+     dfs <- rep(NA,number.of.samples)
+     ts <- rep(NA,number.of.samples)
+     in_interval <- rep(NA, number.of.samples)
+     ps <- rep(NA,number.of.samples)
+     LLs <- rep(NA,number.of.samples)
+     ULs <- rep(NA,number.of.samples)
+
+     pop_data <- data[,1:2]
+     names(pop_data) <- c("x","y")
+     pop.r <- round(cor(pop_data$x, pop_data$y), number.of.decimals)
+
+     if (length(n) > 1) {
+          n_min <- n[1]
+          n_max <- n[2]
+          n_range <- n_max - n_min
+          cur_ns <- round(runif(number.of.samples)*n_range + n_min)
+     } else {
+          cur_ns <- rep(n, number.of.samples)
+     }
+
+     for (i in 1:number.of.samples) {
+          cur_sample_n <- cur_ns[i]
+          cur_sample <- dplyr::sample_n(pop_data, cur_sample_n)
+          x <- cur_sample$x
+          y <- cur_sample$y
+          r_info <- stats::cor.test(x,y)
+          rs[i] <- round(r_info$estimate,number.of.decimals)
+          LLs[i] <- round(r_info$conf.int[1],number.of.decimals)
+          ULs[i] <- round(r_info$conf.int[2],number.of.decimals)
+          in_interval[i] <- is_value_in_interval(pop.r, c(r_info$conf.int[1], r_info$conf.int[2]))
+          ts[i] <- round(r_info$statistic,number.of.decimals)
+          dfs[i] <- round(r_info$parameter,number.of.decimals)
+          ps[i] <- round(r_info$p.value,5)
+     }
+     xx<-1:number.of.samples
+     sample.number <- xx
+     data.out <- data.frame(sample.number, pop.r = pop.r, n = cur_ns, r =  rs, LL = LLs, UL = ULs, ci.captured.pop.r = in_interval, t = ts, df = dfs, p = ps)
+     rownames(data.out) <- NULL
+
+     return(data.out)
+}
+
+
 
 #' Calculate a number of sample correlations based on a specified population correlation
 #' @param pop.r Population correlation. Do not use pop.data is you provide this value.
@@ -84,7 +136,9 @@ is_value_in_interval <- function(value,interval) {
         return(is_in_interval)
 }
 
-
+#' Calculate the percentage of rows that are true in a column
+#' @param x the column to be examined
+#' @return The percent equal to TRUE
 #'@export
 percent_true <- function(x) {
      return((sum(x)/length(x))*100)
