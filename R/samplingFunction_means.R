@@ -1,6 +1,8 @@
 #' Calculate a number of sample d-values (unbiased) based on a specified (infinite) population correlation.
-#' @param pop.M Population d-value
-#' @param pop.SD Cell size for both cells for all samples. If you use n, do not use n.min or n.max.
+#' @param pop.data Data to use for popuilation (optional)
+#' @param data.column.name Column name from data to use for sampling (optional)
+#' @param pop.M Population mean
+#' @param pop.SD Population SD
 #' @param n Cell size for both cells for all samples. If you use n, do not use n.min or n.max.
 #' @param number.of.samples Number of samples to obtain
 #' @param number.of.decimals Number of decimals to report in returned data frame
@@ -8,7 +10,7 @@
 #' @examples
 #' get_M_samples(pop.M = 100, pop.SD = 15, n = 100)
 #' @export
-get_M_samples <- function(pop.M = NA, pop.SD = NA, n, number.of.samples = 10, number.of.decimals = 2) {
+get_M_samples <- function(pop.data = NULL, data.column.name = NULL, pop.M = NA, pop.SD = NA, n, number.of.samples = 10, number.of.decimals = 2) {
 
      Ms <- rep(NA, number.of.samples)
      SDs <- rep(NA, number.of.samples)
@@ -20,8 +22,27 @@ get_M_samples <- function(pop.M = NA, pop.SD = NA, n, number.of.samples = 10, nu
      ULs <- rep(NA,number.of.samples)
      in_interval <- rep(NA, number.of.samples)
 
+     if (!is.null(pop.data)) {
+             dv_sub <- substitute(data.column.name)
+             dv_name <- deparse(dv_sub)
+             dv <- pop.data[,dv_name]
+             pop_data <- data.frame(dv)
+             names(pop_data) <- "x"
+             pop.M <- round(mean(pop_data$x), number.of.decimals)
+             pop.SD <- round(sd(pop_data$x), number.of.decimals)
+             pop.VAR <- round(var(pop_data$x), number.of.decimals)
+     } else {
+             pop.VAR <- pop.SD^2
+     }
+
+
      for (i in 1:number.of.samples) {
-          group.data <- rnorm(n, mean = pop.M, sd = pop.SD)
+          if (!is.null(pop.data)) {
+                  group.data <- dplyr::sample_n(pop_data, n)
+                  group.data <- dplyr::pull(group.data, x)
+          } else {
+                  group.data <- rnorm(n, mean = pop.M, sd = pop.SD)
+          }
 
           Ms[i]  <- round(mean(group.data), number.of.decimals)
           SDs[i] <- round(sd(group.data), number.of.decimals)
@@ -38,7 +59,7 @@ get_M_samples <- function(pop.M = NA, pop.SD = NA, n, number.of.samples = 10, nu
      }
      xx<-1:number.of.samples
      sample.number <- xx
-     data.out <- data.frame(sample.number, pop.M = pop.M, pop.SD = pop.SD, n = n, M = Ms, LL = LLs, UL = ULs, ci.captured.pop.M = in_interval, SD_n = SDsN, SD_n_1 = SDs, Var_n = VARsN, Var_n_1 = VARs, est.SE = SEs)
+     data.out <- data.frame(sample.number, pop.M = pop.M, n = n, sample.M = Ms, LL = LLs, UL = ULs, ci.captured.pop.M = in_interval, pop.var = pop.VAR, sample.var.n = VARsN, sample.var.n_1 = VARs, est.SE = SEs)
      rownames(data.out) <- NULL
      return(data.out)
 }

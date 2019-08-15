@@ -4,13 +4,17 @@
 \alias{get_M_samples}
 \title{Calculate a number of sample d-values (unbiased) based on a specified (infinite) population correlation.}
 \usage{
-get_M_samples(pop.M = NA, pop.SD = NA, n, number.of.samples = 10,
-  number.of.decimals = 2)
+get_M_samples(pop.data = NULL, data.column.name = NULL, pop.M = NA,
+  pop.SD = NA, n, number.of.samples = 10, number.of.decimals = 2)
 }
 \arguments{
-\item{pop.M}{Population d-value}
+\item{pop.data}{Data to use for popuilation (optional)}
 
-\item{pop.SD}{Cell size for both cells for all samples. If you use n, do not use n.min or n.max.}
+\item{data.column.name}{Column name from data to use for sampling (optional)}
+
+\item{pop.M}{Population mean}
+
+\item{pop.SD}{Population SD}
 
 \item{n}{Cell size for both cells for all samples. If you use n, do not use n.min or n.max.}
 

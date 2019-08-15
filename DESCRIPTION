@@ -16,5 +16,7 @@ Imports:
      stats, 
      ggplot2,
      MBESS,
-     dplyr
+     dplyr,
+     MASS,
+     predictionInterval
 RoxygenNote: 6.1.1
