@@ -101,7 +101,7 @@ get_r_samples <- function(pop.r = NA, n, number.of.samples = 10, number.of.decim
      }
      xx<-1:number.of.samples
      sample.number <- xx
-     data.out <- data.frame(sample.number, pop.r = pop.r, n = n, r =  rs, ci.LL = LLs, ci.UL = ULs, ci.captures.pop.r = in_interval, pi.LL = pi_LLs, pi.UL = pi_ULs, pi.captures.next.r = pi_in_interval, ci.captures.next.r = ci_as_pi_in_interval)
+     data.out <- data.frame(sample.number, pop.r = pop.r, n = n, r =  rs, ci.LL = LLs, ci.UL = ULs, ci.captures.pop.r = in_interval, p = ps)
      rownames(data.out) <- NULL
 
 
