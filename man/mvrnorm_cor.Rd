@@ -2,24 +2,22 @@
 % Please edit documentation in R/utility.R
 \name{mvrnorm_cor}
 \alias{mvrnorm_cor}
-\title{Create simulated data}
+\title{Create simulated correlatio data}
 \usage{
 mvrnorm_cor(n = 1, mu, sd, cormatrix, empirical = FALSE)
 }
 \arguments{
-\item{n}{Population d-value}
+\item{n}{Sample size}
 
-\item{mu}{Population d-value}
+\item{mu}{Sample mean values}
 
-\item{sd}{Population d-value}
+\item{sd}{Sample sd values}
 
-\item{cormatrix}{Population d-value}
-
-\item{empirical}{Population d-value}
+\item{cormatrix}{Sample correlation matrix}
 }
 \value{
 Data frame with desired properties
 }
 \description{
-Create simulated data
+Create simulated correlatio data
 }

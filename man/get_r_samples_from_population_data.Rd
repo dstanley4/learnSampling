@@ -10,7 +10,7 @@ get_r_samples_from_population_data(data = NA, n,
 \arguments{
 \item{data}{Population data - first two columns used for population correlation rho.}
 
-\item{n}{Sample size for all samples If you use n, do not use n.min or n.max.}
+\item{n}{Sample size for all samples (range of sample size if two specified)}
 
 \item{number.of.samples}{Number of samples to obtain}
 
