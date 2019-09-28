@@ -1,6 +1,6 @@
 #' Calculate a number of sample correlations based on a specified population correlation
 #' @param data Population data - first two columns used for population correlation rho.
-#' @param n Sample size for all samples If you use n, do not use n.min or n.max.
+#' @param n Sample size for all samples (range of sample size if two specified)
 #' @param number.of.samples Number of samples to obtain
 #' @param number.of.decimals Number of decimals to report in returned data frame
 #' @return Data frame with sample correlations
