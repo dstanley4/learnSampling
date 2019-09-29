@@ -25,7 +25,7 @@ mvrnorm_cor <- function(n = 1, mu, sd, cormatrix, empirical = FALSE) {
 }
 
 
-#' Create simulated data
+#' Create simulated correlation population
 #' @param rho Population correlation
 #' @param n Population size
 #' @param mu Population mean values
@@ -47,5 +47,43 @@ make_pop_cor <- function(n = 1000000, rho = .30, mu = c(0,0), sd = c(1,1)) {
         my_data <- as.data.frame(my_data)
         names(my_data) <- c("x", "y")
         return(my_data)
+
+}
+
+
+
+#' Create simulated d-value population
+#' @param d Population d-value
+#' @param n Population size (size for each of the two populations)
+#' @param mu Population mean values (for both populations)
+#' @param sd Population sd values (for both populations)
+#' @return Data frame with desired properties
+#' @export
+make_pop_d <- function(n = 1000000, d = .30, mu = c(.8,0), sd = c(1,1)) {
+
+        x <- as.numeric(scale(rnorm(n))) * sd[1] + mu[1]
+        pop1 <- data.frame(x)
+
+        x <- as.numeric(scale(rnorm(n))) * sd[2] + mu[2]
+        pop2 <- data.frame(x)
+
+        output <- list(pop1 = pop1,
+                       pop2 = pop2)
+
+        return(output)
+
+}
+
+
+calc_pop_d <- function(pop1, pop2) {
+        pop1var <- var(pop1[,1])
+        pop2var <- var(pop2[,1])
+        n1 <- length(pop1[,1])
+        n2 <- length(pop2[,1])
+
+        pooled_var <- (pop1var*(n1-1) + pop2var*(n2-1))/(n1+n2-2)
+
+        dout <- (mean(pop1[,1]) - mean(pop2[,1]))/ sqrt(pooled_var)
+
 
 }
