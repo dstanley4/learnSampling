@@ -2,7 +2,7 @@
 % Please edit documentation in R/utility.R
 \name{make_pop_cor}
 \alias{make_pop_cor}
-\title{Create simulated data}
+\title{Create simulated correlation population}
 \usage{
 make_pop_cor(n = 1e+06, rho = 0.3, mu = c(0, 0), sd = c(1, 1))
 }
@@ -19,5 +19,5 @@ make_pop_cor(n = 1e+06, rho = 0.3, mu = c(0, 0), sd = c(1, 1))
 Data frame with desired properties
 }
 \description{
-Create simulated data
+Create simulated correlation population
 }

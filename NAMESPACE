@@ -2,9 +2,11 @@
 
 export(get_M_samples)
 export(get_d_samples)
+export(get_d_samples_from_population_data)
 export(get_r_samples)
 export(get_r_samples_from_population_data)
 export(make_pop_cor)
+export(make_pop_d)
 export(mvrnorm_cor)
 export(percent_true)
 importFrom("stats","cor")
