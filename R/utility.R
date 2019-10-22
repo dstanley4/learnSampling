@@ -87,3 +87,122 @@ calc_pop_d <- function(pop1, pop2) {
 
 
 }
+
+
+#' Create simulated cmeasurement error
+#' @param df data frame with simulation results
+#' @param rxx vector with range of rxx values
+#' @param ryy vector with range of ryy values
+#' @return Data frame with desired properties
+#' @export
+simulate_measurement_error <- function(df, rxx, ryy) {
+
+    rxx_max <- max(rxx)
+    rxx_min <- min(rxx)
+    rxx_range <- rxx_max - rxx_min
+    rxx_sd <- rxx_range / 4
+    rxx_mean <- mean(rxx)
+
+    ryy_max <- max(ryy)
+    ryy_min <- min(ryy)
+    ryy_range <- ryy_max - ryy_min
+    ryy_sd <- ryy_range / 4
+    ryy_mean <- mean(ryy)
+
+    num_r <- length(df$r)
+
+    rxx_values <- round(rnorm(n = num_r,
+                              mean = rxx_mean,
+                              sd = rxx_sd),2)
+    rxx_values[rxx_values>1] <- 1
+    rxx_values[rxx_values<.1] <- .1
+
+
+    ryy_values <- round(rnorm(n = num_r,
+                              mean = ryy_mean,
+                              sd = ryy_sd),2)
+    ryy_values[ryy_values>1] <- 1
+    ryy_values[ryy_values<.1] <- .1
+
+
+    r_true <- df$r
+    n <- df$n
+    r_obs <- r_true * sqrt(rxx_values * ryy_values)
+
+    ci_obs_LL <- ci.LL(r_obs, n)
+    ci_obs_UL <- ci.UL(r_obs, n)
+
+    ci_cor_LL <- ci_obs_LL/sqrt(rxx_values*ryy_values)
+    ci_cor_UL <- ci_obs_UL/sqrt(rxx_values*ryy_values)
+
+
+    in_interval_obs <- rep(NA, length(n))
+    in_interval_cor <- rep(NA, length(n))
+    ci_cor <- rep("", length(n))
+    ci_obs <- rep("", length(n))
+    number.of.samples <- length(n)
+    pop.r <- df$pop.r[1]
+    for (i in 1:number.of.samples) {
+        ci_cor[i] <- sprintf("[%1.2f, %1.2f]", ci_cor_LL[i], ci_cor_UL[i])
+        ci_obs[i] <- sprintf("[%1.2f, %1.2f]", ci_obs_LL[i], ci_obs_UL[i])
+
+        in_interval_cor[i] <- is_value_in_interval(pop.r, c(ci_cor_LL[i], ci_cor_UL[i]))
+        in_interval_obs[i] <- is_value_in_interval(pop.r, c(ci_obs_LL[i], ci_obs_UL[i]))
+    }
+
+
+    addon_cols <- data.frame(r.obs = round(r_obs,2),
+                             rxx = rxx_values,
+                             ryy = ryy_values,
+                             ci.obs = ci_obs,
+                             ci.obs.cap.pop.r = in_interval_obs,
+                             ci.cor = ci_cor,
+                             ci.cor.cap.pop.r = in_interval_cor)
+
+    df <- cbind(df, addon_cols)
+
+    df <- dplyr::select(df,
+                        sample.number,
+                        pop.r,
+                        n,
+                        r.obs,
+                        rxx,
+                        ryy,
+                        ci.obs,
+                        ci.obs.cap.pop.r,
+                        ci.cor,
+                        ci.cor.cap.pop.r)
+
+    return(df)
+}
+
+
+
+r_to_z <- function(r) {
+    zvalue <- atanh(r)
+    return(zvalue)
+}
+
+z_to_r <- function(z) {
+    rvalue <- tanh(z)
+    return(rvalue)
+}
+
+r_to_z_se <- function(N) {
+    se_out <-  1 / sqrt(N-3)
+    return(se_out)
+}
+
+
+ci.LL <- function(r, n, level = .95) {
+    alpha_level_half = (1 - level)/2
+    LLz <- r_to_z(r) - qnorm(1 -alpha_level_half) * r_to_z_se(n)
+    LL <- z_to_r(LLz)
+}
+
+ci.UL <- function(r, n, level = .95) {
+    alpha_level_half = (1 - level)/2
+    ULz <- r_to_z(r) + qnorm(1 -alpha_level_half) * r_to_z_se(n)
+    UL <- z_to_r(ULz)
+}
+
