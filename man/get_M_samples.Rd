@@ -4,11 +4,18 @@
 \alias{get_M_samples}
 \title{Calculate a number of sample d-values (unbiased) based on a specified (infinite) population correlation.}
 \usage{
-get_M_samples(pop.data = NULL, data.column.name = NULL, pop.M = NA,
-  pop.SD = NA, n, number.of.samples = 10, number.of.decimals = 2)
+get_M_samples(
+  pop.data = NULL,
+  data.column.name = NULL,
+  pop.M = NA,
+  pop.SD = NA,
+  n,
+  number.of.samples = 10,
+  number.of.decimals = 2
+)
 }
 \arguments{
-\item{pop.data}{Data to use for popuilation (optional)}
+\item{pop.data}{Data to use for population (optional)}
 
 \item{data.column.name}{Column name from data to use for sampling (optional)}
 
@@ -23,7 +30,7 @@ get_M_samples(pop.data = NULL, data.column.name = NULL, pop.M = NA,
 \item{number.of.decimals}{Number of decimals to report in returned data frame}
 }
 \value{
-Data frame with sample d-values
+Data frame with desired properties
 }
 \description{
 Calculate a number of sample d-values (unbiased) based on a specified (infinite) population correlation.

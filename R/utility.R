@@ -206,3 +206,31 @@ ci.UL <- function(r, n, level = .95) {
     UL <- z_to_r(ULz)
 }
 
+
+
+#' Create simulated correlation data
+#' @param n Sample size
+#' @param mu Sample mean values
+#' @param sd Sample sd values
+#' @param cormatrix Sample correlation matrix
+#' @return Data frame with desired properties
+#' @export
+mvrnorm_cor <- function(n = 1, mu, sd, cormatrix, empirical = FALSE) {
+
+    sdmatrix <- sd %o% sd
+
+    if (!all(dim(sdmatrix) == dim(cormatrix))) {
+        print("Error: sd list and cormatrix not compatible")
+        return(-1)
+    }
+
+    Sigma <- cormatrix * sdmatrix
+
+    dataout <- MASS::mvrnorm(n = n,
+                             mu = mu,
+                             Sigma = Sigma,
+                             empirical = empirical)
+
+    return(dataout)
+}
+

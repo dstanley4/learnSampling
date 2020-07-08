@@ -3,15 +3,14 @@
 \docType{package}
 \name{learnSampling}
 \alias{learnSampling}
-\alias{learnSampling-package}
 \title{Create sampling demonstrations}
 \description{
 A variety of routines to help teach sampling. A few key routines are highlighted below.
 \tabular{ll}{
 Package: \tab learnSampling\cr
 Type: \tab Package\cr
-Version: \tab 0.1\cr
-Date: \tab 2019-01-29\cr
+Version: \tab 0.2\cr
+Date: \tab 2020-07-01\cr
 License: \tab Unlimited\cr
 }
 }

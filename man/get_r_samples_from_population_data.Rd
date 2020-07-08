@@ -4,8 +4,12 @@
 \alias{get_r_samples_from_population_data}
 \title{Calculate a number of sample correlations based on a specified population correlation}
 \usage{
-get_r_samples_from_population_data(data = NA, n,
-  number.of.samples = 10, number.of.decimals = 2)
+get_r_samples_from_population_data(
+  data = NA,
+  n,
+  number.of.samples = 10,
+  number.of.decimals = 2
+)
 }
 \arguments{
 \item{data}{Population data - first two columns used for population correlation rho.}

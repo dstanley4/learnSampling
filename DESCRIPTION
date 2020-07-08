@@ -1,8 +1,8 @@
 Package: learnSampling
 Type: Package
 Title: Tools to help learn sampling
-Version: 0.1
-Date: 2015-10-05
+Version: 0.2
+Date: 2020-07-01
 Author: David J. Stanley
 Maintainer: David J. Stanley <dstanley@uoguelph.ca>
 Description: A set of tools I use to teach graduate statistics.
@@ -14,9 +14,10 @@ Suggests:
      apaTables
 Imports:
      stats, 
+     tibble,
      ggplot2,
      MBESS,
      dplyr,
      MASS,
      predictionInterval
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.0

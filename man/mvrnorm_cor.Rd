@@ -5,6 +5,8 @@
 \title{Create simulated correlatio data}
 \usage{
 mvrnorm_cor(n = 1, mu, sd, cormatrix, empirical = FALSE)
+
+mvrnorm_cor(n = 1, mu, sd, cormatrix, empirical = FALSE)
 }
 \arguments{
 \item{n}{Sample size}
@@ -17,7 +19,11 @@ mvrnorm_cor(n = 1, mu, sd, cormatrix, empirical = FALSE)
 }
 \value{
 Data frame with desired properties
+
+Data frame with desired properties
 }
 \description{
 Create simulated correlatio data
+
+Create simulated correlation data
 }

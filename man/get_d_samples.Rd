@@ -4,9 +4,14 @@
 \alias{get_d_samples}
 \title{Calculate a number of sample d-values (unbiased) based on a specified (infinite) population correlation.}
 \usage{
-get_d_samples(pop.d = NA, cell.n = NA, number.of.samples = 10,
-  number.of.decimals = 3, var.equal = TRUE,
-  alternative = "two.sided")
+get_d_samples(
+  pop.d = NA,
+  cell.n = NA,
+  number.of.samples = 10,
+  number.of.decimals = 3,
+  var.equal = TRUE,
+  alternative = "two.sided"
+)
 }
 \arguments{
 \item{pop.d}{Population d-value}

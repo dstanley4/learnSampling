@@ -4,9 +4,15 @@
 \alias{get_d_samples_from_population_data}
 \title{Calculate a number of sample correlations based on a specified population correlation}
 \usage{
-get_d_samples_from_population_data(pop1 = NULL, pop2 = NULL, cell.n,
-  number.of.samples = 10, number.of.decimals = 2, var.equal = TRUE,
-  alternative = "two.sided")
+get_d_samples_from_population_data(
+  pop1 = NULL,
+  pop2 = NULL,
+  cell.n,
+  number.of.samples = 10,
+  number.of.decimals = 2,
+  var.equal = TRUE,
+  alternative = "two.sided"
+)
 }
 \arguments{
 \item{pop1}{Population data using first column of data frame}

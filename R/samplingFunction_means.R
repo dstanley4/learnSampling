@@ -1,12 +1,12 @@
 #' Calculate a number of sample d-values (unbiased) based on a specified (infinite) population correlation.
-#' @param pop.data Data to use for popuilation (optional)
+#' @param pop.data Data to use for population (optional)
 #' @param data.column.name Column name from data to use for sampling (optional)
 #' @param pop.M Population mean
 #' @param pop.SD Population SD
 #' @param n Cell size for both cells for all samples. If you use n, do not use n.min or n.max.
 #' @param number.of.samples Number of samples to obtain
 #' @param number.of.decimals Number of decimals to report in returned data frame
-#' @return Data frame with sample d-values
+#' @return Data frame with desired properties
 #' @examples
 #' get_M_samples(pop.M = 100, pop.SD = 15, n = 100)
 #' @export
@@ -62,4 +62,36 @@ get_M_samples <- function(pop.data = NULL, data.column.name = NULL, pop.M = NA, 
      data.out <- data.frame(sample.number, pop.M = pop.M, n = n, sample.M = Ms, LL = LLs, UL = ULs, ci.captured.pop.M = in_interval, pop.var = pop.VAR, sample.var.n = VARsN, sample.var.n_1 = VARs, est.SE = SEs)
      rownames(data.out) <- NULL
      return(data.out)
+}
+
+
+#' @export
+get_male_heights <- function(N = 50000, seed_value = 1) {
+        set.seed(seed_value)
+        id <- 1:N
+        sex = rep("male", N)
+        height = round(rnorm(n = N, mean = 180, sd = 10))
+        data_out <- tibble::tibble(id, sex, height)
+        return(data_out)
+}
+
+#' @export
+get_female_heights <- function(N = 50000, seed_value = 1) {
+        set.seed(seed_value)
+        id <- 1:N
+        sex = rep("female", N)
+        height = round(rnorm(n = N, mean = 165, sd = 10))
+        data_out <- tibble::tibble(id, sex, height)
+        return(data_out)
+}
+
+
+#' @export
+get_height_population <- function(N = 100000, seed_value = 1) {
+        males <- get_male_heights()
+        females <- get_female_heights()
+        nsize <- dim(males)[1]
+        females$id <- females$id + nsize
+        data_out <- dplyr::bind_rows(males, females)
+        return(data_out)
 }

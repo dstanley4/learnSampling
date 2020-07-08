@@ -4,8 +4,7 @@
 \alias{get_r_samples}
 \title{Calculate a number of sample correlations based on a specified population correlation}
 \usage{
-get_r_samples(pop.r = NA, n, number.of.samples = 10,
-  number.of.decimals = 3)
+get_r_samples(pop.r = NA, n, number.of.samples = 10, number.of.decimals = 3)
 }
 \arguments{
 \item{pop.r}{Population correlation. Do not use pop.data is you provide this value.}
