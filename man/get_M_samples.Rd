@@ -6,18 +6,19 @@
 \usage{
 get_M_samples(
   pop.data = NULL,
-  data.column.name = NULL,
+  pop.column.name = NULL,
   pop.M = NA,
   pop.SD = NA,
-  n,
+  n = 10,
   number.of.samples = 10,
-  number.of.decimals = 2
+  number.of.decimals = 2,
+  expanded.output = FALSE
 )
 }
 \arguments{
 \item{pop.data}{Data to use for population (optional)}
 
-\item{data.column.name}{Column name from data to use for sampling (optional)}
+\item{pop.column.name}{Column name from data to use for sampling (optional)}
 
 \item{pop.M}{Population mean}
 

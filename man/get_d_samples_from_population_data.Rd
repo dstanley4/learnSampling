@@ -9,9 +9,7 @@ get_d_samples_from_population_data(
   pop2 = NULL,
   cell.n,
   number.of.samples = 10,
-  number.of.decimals = 2,
-  var.equal = TRUE,
-  alternative = "two.sided"
+  number.of.decimals = 2
 )
 }
 \arguments{
@@ -24,10 +22,6 @@ get_d_samples_from_population_data(
 \item{number.of.samples}{Number of samples to obtain}
 
 \item{number.of.decimals}{Number of decimals to report in returned data frame}
-
-\item{var.equal}{TRUE/FALSE indicate type of t-test to use}
-
-\item{alternative}{indicates type of alternative hypothesis (e.g., "two.sided") for t.test}
 }
 \value{
 Data frame with sample correlations

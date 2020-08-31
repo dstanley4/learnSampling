@@ -1,6 +1,6 @@
 #' Calculate a number of sample d-values (unbiased) based on a specified (infinite) population correlation.
 #' @param pop.data Data to use for population (optional)
-#' @param data.column.name Column name from data to use for sampling (optional)
+#' @param pop.column.name Column name from data to use for sampling (optional)
 #' @param pop.M Population mean
 #' @param pop.SD Population SD
 #' @param n Cell size for both cells for all samples. If you use n, do not use n.min or n.max.
@@ -10,7 +10,9 @@
 #' @examples
 #' get_M_samples(pop.M = 100, pop.SD = 15, n = 100)
 #' @export
-get_M_samples <- function(pop.data = NULL, data.column.name = NULL, pop.M = NA, pop.SD = NA, n, number.of.samples = 10, number.of.decimals = 2) {
+get_M_samples <- function(pop.data = NULL, pop.column.name = NULL, pop.M = NA, pop.SD = NA, n = 10, number.of.samples = 10, number.of.decimals = 2, expanded.output = FALSE) {
+
+     set.seed(1)
 
      Ms <- rep(NA, number.of.samples)
      SDs <- rep(NA, number.of.samples)
@@ -23,7 +25,7 @@ get_M_samples <- function(pop.data = NULL, data.column.name = NULL, pop.M = NA, 
      in_interval <- rep(NA, number.of.samples)
 
      if (!is.null(pop.data)) {
-             dv_sub <- substitute(data.column.name)
+             dv_sub <- substitute(pop.column.name)
              dv_name <- deparse(dv_sub)
              dv <- pop.data[,dv_name]
              pop_data <- data.frame(dv)
@@ -44,7 +46,7 @@ get_M_samples <- function(pop.data = NULL, data.column.name = NULL, pop.M = NA, 
                   group.data <- rnorm(n, mean = pop.M, sd = pop.SD)
           }
 
-          Ms[i]  <- round(mean(group.data), number.of.decimals)
+          Ms[i]  <- mean(group.data)
           SDs[i] <- round(sd(group.data), number.of.decimals)
           VARs[i] <- round(var(group.data), number.of.decimals)
           VARsN[i] <- VARs[i]*(n-1)/n
@@ -59,39 +61,61 @@ get_M_samples <- function(pop.data = NULL, data.column.name = NULL, pop.M = NA, 
      }
      xx<-1:number.of.samples
      sample.number <- xx
-     data.out <- data.frame(sample.number, pop.M = pop.M, n = n, sample.M = Ms, LL = LLs, UL = ULs, ci.captured.pop.M = in_interval, pop.var = pop.VAR, sample.var.n = VARsN, sample.var.n_1 = VARs, est.SE = SEs)
+     if (expanded.output == TRUE) {
+             data.out <- data.frame(n = n,
+                                       pop_mean = pop.M,
+                                       sample_mean = Ms,
+                                       LL = LLs,
+                                       UL = ULs,
+                                       ci_captured_pop_M = in_interval,
+                                       pop_var = pop.VAR,
+                                       sample_var_n = VARsN,
+                                       sample_var_n_1 = VARs,
+                                       est_SE = SEs)
+     } else {
+             data.out <- data.frame(study = sample.number,
+                                        n = n,
+                                       sample_mean = Ms,
+                                       sample_var_n = VARsN,
+                                       sample_var_n_1 = VARs)
+     }
      rownames(data.out) <- NULL
      return(data.out)
 }
 
 
 #' @export
-get_male_heights <- function(N = 50000, seed_value = 1) {
+get_male_heights <- function(N = 50000, seed_value = 1, mean = 180, std = 7.5) {
         set.seed(seed_value)
         id <- 1:N
         sex = rep("male", N)
-        height = round(rnorm(n = N, mean = 180, sd = 10))
+        height = round(rnorm(n = N, mean = mean, sd = std))
         data_out <- tibble::tibble(id, sex, height)
         return(data_out)
 }
 
 #' @export
-get_female_heights <- function(N = 50000, seed_value = 1) {
+get_female_heights <- function(N = 50000, seed_value = 1, mean = 165, std = 7.5) {
         set.seed(seed_value)
         id <- 1:N
         sex = rep("female", N)
-        height = round(rnorm(n = N, mean = 165, sd = 10))
+        height = round(rnorm(n = N, mean = mean, sd = std))
         data_out <- tibble::tibble(id, sex, height)
         return(data_out)
 }
 
 
 #' @export
-get_height_population <- function(N = 100000, seed_value = 1) {
-        males <- get_male_heights()
-        females <- get_female_heights()
+get_height_population <- function(N = 100000, seed_value = 1, mdiff = 15,  std = 10) {
+        females <- get_female_heights(mean = 165, std = std)
+        male_mean <- 165 + mdiff
+        males <- get_male_heights(mean = male_mean, std = std)
         nsize <- dim(males)[1]
         females$id <- females$id + nsize
         data_out <- dplyr::bind_rows(males, females)
+        N <- dim(data_out)[1]
+        new_order <- sample(1:N,N)
+        data_out <- data_out[new_order,]
+        data_out$id <- 1:N
         return(data_out)
 }
