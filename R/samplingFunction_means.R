@@ -80,6 +80,7 @@ get_M_samples <- function(pop.data = NULL, pop.column.name = NULL, pop.M = NA, p
                                        sample_var_n_1 = VARs)
      }
      rownames(data.out) <- NULL
+     data.out <- tibble::as_tibble(data.out)
      return(data.out)
 }
 

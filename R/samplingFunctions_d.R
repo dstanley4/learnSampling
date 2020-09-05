@@ -142,6 +142,7 @@ get_d_samples_from_population_data <- function(pop1 = NULL, pop2 = NULL, cell.n,
         data.out <- round(data.out,2)
         rownames(data.out) <- NULL
 
+        data.out <- tibble::as_tibble(data.out)
         return(data.out)
 }
 
