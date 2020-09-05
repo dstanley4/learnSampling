@@ -47,6 +47,7 @@ get_r_samples_from_population_data <- function(data = NA, n, number.of.samples =
      data.out <- data.frame(sample.number, n = cur_ns, r =  rs)
      rownames(data.out) <- NULL
 
+     data.out <- tibble::as_tibble(data.out)
      return(data.out)
 }
 
