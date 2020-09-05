@@ -130,8 +130,7 @@ get_d_samples_from_population_data <- function(pop1 = NULL, pop2 = NULL, cell.n,
         xx<-1:number.of.samples
         sample.number <- xx
 
-        data.out <- data.frame(study = sample.number,
-                               group_n = ns.for.cell1,
+        data.out <- data.frame(n_per_cell = ns.for.cell1,
                                mean1 = m1s,
                                var1_n_1= v1s,
                                mean2 = m2s,
