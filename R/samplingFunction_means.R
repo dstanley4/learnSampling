@@ -38,24 +38,40 @@ get_M_samples <- function(pop.data = NULL, pop.column.name = NULL, pop.M = NA, p
      }
 
 
+     dv_col <- pull(dv[,1])
+     N <- length(dv_col)
+     pop_id_vector <- seq(1:N)
+
+
+
      for (i in 1:number.of.samples) {
           if (!is.null(pop.data)) {
-                  group.data <- dplyr::sample_n(pop_data, n)
-                  group.data <- dplyr::pull(group.data, x)
+                  sample_id <- sample(pop_id_vector, n)
+
+                  Ms[i]  <- mean(dv_col[sample_id])
+                  SDs[i] <- round(sd(dv_col[sample_id]), number.of.decimals)
+                  VARs[i] <- round(var(dv_col[sample_id]), number.of.decimals)
+                  VARsN[i] <- VARs[i]*(n-1)/n
+                  SDsN[i] <- sqrt(VARsN[i])
+                  SEs[i] <- round(SDs[i]/sqrt(n), number.of.decimals)
+                  tout <- t.test(dv_col[sample_id])
+                  LLs[i] <- round(tout$conf.int[1],number.of.decimals)
+                  ULs[i] <- round(tout$conf.int[2],number.of.decimals)
+                  in_interval[i] <- is_value_in_interval(pop.M, c(LLs[i], ULs[i]))
           } else {
                   group.data <- rnorm(n, mean = pop.M, sd = pop.SD)
+                  Ms[i]  <- mean(group.data)
+                  SDs[i] <- round(sd(group.data), number.of.decimals)
+                  VARs[i] <- round(var(group.data), number.of.decimals)
+                  VARsN[i] <- VARs[i]*(n-1)/n
+                  SDsN[i] <- sqrt(VARsN[i])
+                  SEs[i] <- round(SDs[i]/sqrt(n), number.of.decimals)
+                  tout <- t.test(group.data)
+                  LLs[i] <- round(tout$conf.int[1],number.of.decimals)
+                  ULs[i] <- round(tout$conf.int[2],number.of.decimals)
+                  in_interval[i] <- is_value_in_interval(pop.M, c(LLs[i], ULs[i]))
           }
 
-          Ms[i]  <- mean(group.data)
-          SDs[i] <- round(sd(group.data), number.of.decimals)
-          VARs[i] <- round(var(group.data), number.of.decimals)
-          VARsN[i] <- VARs[i]*(n-1)/n
-          SDsN[i] <- sqrt(VARsN[i])
-          SEs[i] <- round(SDs[i]/sqrt(n), number.of.decimals)
-          tout <- t.test(group.data)
-          LLs[i] <- round(tout$conf.int[1],number.of.decimals)
-          ULs[i] <- round(tout$conf.int[2],number.of.decimals)
-          in_interval[i] <- is_value_in_interval(pop.M, c(LLs[i], ULs[i]))
 
 
      }
@@ -83,6 +99,83 @@ get_M_samples <- function(pop.data = NULL, pop.column.name = NULL, pop.M = NA, p
      data.out <- tibble::as_tibble(data.out)
      return(data.out)
 }
+
+# get_M_samples <- function(pop.data = NULL, pop.column.name = NULL, pop.M = NA, pop.SD = NA, n = 10, number.of.samples = 10, number.of.decimals = 2, expanded.output = FALSE) {
+#
+#         set.seed(1)
+#
+#         Ms <- rep(NA, number.of.samples)
+#         SDs <- rep(NA, number.of.samples)
+#         SDsN <- rep(NA, number.of.samples)
+#         VARs <- rep(NA, number.of.samples)
+#         VARsN <- rep(NA, number.of.samples)
+#         SEs <- rep(NA, number.of.samples)
+#         LLs <- rep(NA,number.of.samples)
+#         ULs <- rep(NA,number.of.samples)
+#         in_interval <- rep(NA, number.of.samples)
+#
+#         if (!is.null(pop.data)) {
+#                 dv_sub <- substitute(pop.column.name)
+#                 dv_name <- deparse(dv_sub)
+#                 dv <- pop.data[,dv_name]
+#                 pop_data <- data.frame(dv)
+#                 names(pop_data) <- "x"
+#                 pop.M <- round(mean(pop_data$x), number.of.decimals)
+#                 pop.SD <- round(sd(pop_data$x), number.of.decimals)
+#                 pop.VAR <- round(var(pop_data$x), number.of.decimals)
+#         } else {
+#                 pop.VAR <- pop.SD^2
+#         }
+#
+#
+#         for (i in 1:number.of.samples) {
+#                 if (!is.null(pop.data)) {
+#                         group.data <- dplyr::sample_n(pop_data, n)
+#                         group.data <- dplyr::pull(group.data, x)
+#                 } else {
+#                         group.data <- rnorm(n, mean = pop.M, sd = pop.SD)
+#                 }
+#
+#                 Ms[i]  <- mean(group.data)
+#                 SDs[i] <- round(sd(group.data), number.of.decimals)
+#                 VARs[i] <- round(var(group.data), number.of.decimals)
+#                 VARsN[i] <- VARs[i]*(n-1)/n
+#                 SDsN[i] <- sqrt(VARsN[i])
+#                 SEs[i] <- round(SDs[i]/sqrt(n), number.of.decimals)
+#                 tout <- t.test(group.data)
+#                 LLs[i] <- round(tout$conf.int[1],number.of.decimals)
+#                 ULs[i] <- round(tout$conf.int[2],number.of.decimals)
+#                 in_interval[i] <- is_value_in_interval(pop.M, c(LLs[i], ULs[i]))
+#
+#
+#         }
+#         xx<-1:number.of.samples
+#         sample.number <- xx
+#         if (expanded.output == TRUE) {
+#                 data.out <- data.frame(n = n,
+#                                        pop_mean = pop.M,
+#                                        sample_mean = Ms,
+#                                        LL = LLs,
+#                                        UL = ULs,
+#                                        ci_captured_pop_M = in_interval,
+#                                        pop_var = pop.VAR,
+#                                        sample_var_n = VARsN,
+#                                        sample_var_n_1 = VARs,
+#                                        est_SE = SEs)
+#         } else {
+#                 data.out <- data.frame(study = sample.number,
+#                                        n = n,
+#                                        sample_mean = Ms,
+#                                        sample_var_n = VARsN,
+#                                        sample_var_n_1 = VARs)
+#         }
+#         rownames(data.out) <- NULL
+#         data.out <- tibble::as_tibble(data.out)
+#         return(data.out)
+# }
+
+
+
 
 
 #' @export
