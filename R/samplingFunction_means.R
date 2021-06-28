@@ -179,31 +179,43 @@ get_M_samples <- function(pop.data = NULL, pop.column.name = NULL, pop.M = NA, p
 
 
 #' @export
-get_male_heights <- function(N = 50000, seed_value = 1, mean = 180, std = 7.5) {
+get_male_heights <- function(N = 50000, seed_value = 1, mean = 180, std = 7.5, variance) {
+        if (!is.null(variance)) {
+                std = sqrt(variance)
+        }
+
         set.seed(seed_value)
         id <- 1:N
         sex = rep("male", N)
-        height = round(rnorm(n = N, mean = mean, sd = std))
+        height = round(as.numeric(scale(rnorm(n = N, mean = mean, sd = std))*std+mean))
         data_out <- tibble::tibble(id, sex, height)
         return(data_out)
 }
 
 #' @export
-get_female_heights <- function(N = 50000, seed_value = 1, mean = 165, std = 7.5) {
+get_female_heights <- function(N = 50000, seed_value = 1, mean = 165, std = 7.5, variance) {
+        if (!is.null(variance)) {
+                std = sqrt(variance)
+        }
+
         set.seed(seed_value)
         id <- 1:N
         sex = rep("female", N)
-        height = round(rnorm(n = N, mean = mean, sd = std))
+        height = round(as.numeric(scale(rnorm(n = N, mean = mean, sd = std))*std+mean))
         data_out <- tibble::tibble(id, sex, height)
         return(data_out)
 }
 
 
 #' @export
-get_height_population <- function(N = 100000, seed_value = 1, mdiff = 15,  std = 10) {
-        females <- get_female_heights(mean = 165, std = std)
+get_height_population <- function(N = 100000, seed_value = 1, mdiff = 15,  std = 10, variance) {
+        if (!is.null(variance)) {
+             std = sqrt(variance)
+        }
+
+        females <- get_female_heights(mean = 165, variance = variance)
         male_mean <- 165 + mdiff
-        males <- get_male_heights(mean = male_mean, std = std)
+        males <- get_male_heights(mean = male_mean, variance = variance)
         nsize <- dim(males)[1]
         females$id <- females$id + nsize
         data_out <- dplyr::bind_rows(males, females)
@@ -211,5 +223,19 @@ get_height_population <- function(N = 100000, seed_value = 1, mdiff = 15,  std =
         new_order <- sample(1:N,N)
         data_out <- data_out[new_order,]
         data_out$id <- 1:N
+        return(data_out)
+}
+
+
+#' @export
+make_population <- function(N = 50000, seed_value = 1, mean = 165, std, variance = 56) {
+        if (!is.null(variance)) {
+                std = sqrt(variance)
+        }
+
+        set.seed(seed_value)
+        id <- 1:N
+        height = round(as.numeric(scale(rnorm(n = N, mean = mean, sd = std))*std+mean))
+        data_out <- tibble::tibble(id, height)
         return(data_out)
 }
