@@ -208,9 +208,11 @@ get_female_heights <- function(N = 50000, seed_value = 1, mean = 165, std = 7.5,
 
 
 #' @export
-get_height_population <- function(N = 100000, seed_value = 1, mdiff = 15,  std = 10, variance) {
-        if (!is.null(variance)) {
-             std = sqrt(variance)
+get_height_population <- function(N = 100000, seed_value = 1, mdiff = 15,  std = 10, variance = NULL) {
+        if (is.null(variance)) {
+                if (!is.null(std)) {
+                        variance = std ^2
+                }
         }
 
         females <- get_female_heights(mean = 165, variance = variance)
