@@ -241,3 +241,37 @@ make_population <- function(N = 50000, seed_value = 1, mean = 165, std, variance
         data_out <- tibble::tibble(id, height)
         return(data_out)
 }
+
+
+#' @export
+get_mean_samples_ratio <-function(..., n = 5, number.of.samples = 10) {
+        population_list <- list(...)
+        number_pops = length(population_list)
+
+
+        cur_pop_num <- 1
+        cur_K <- 1
+
+        # ensure equal number of samples from each populations
+        remainder_n <- number.of.samples %% number_pops # remainder from division
+        max_K <- number.of.samples - remainder_n
+
+        while (cur_K <= max_K) {
+                cur_population <- population_list[[cur_pop_num]]
+                cur_sample <- dplyr::slice_sample(cur_population, n = n)
+                #print(cur_pop_num)
+                #print(cur_sample)
+
+                print(sprintf("Sample %1.0f: Pop num: %1.2f, mean = %1.2f",  cur_K, cur_pop_num, mean(cur_sample$height)))
+
+                cur_K <- cur_K + 1
+                cur_pop_num <- cur_pop_num + 1
+                if (cur_pop_num > number_pops) {
+                        cur_pop_num <- 1
+                }
+        }
+}
+
+
+
+
