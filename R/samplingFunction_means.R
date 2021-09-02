@@ -244,32 +244,45 @@ make_population <- function(N = 50000, seed_value = 1, mean = 165, std, variance
 
 
 #' @export
-get_mean_samples_ratio <-function(..., n = 5, number.of.samples = 10) {
+get_mean_samples_ratio <-function(..., n = 5, a = 1, number.of.trials = 10) {
         population_list <- list(...)
         number_pops = length(population_list)
+        K <- number.of.trials
 
-
-        cur_pop_num <- 1
-        cur_K <- 1
-
-        # ensure equal number of samples from each populations
-        remainder_n <- number.of.samples %% number_pops # remainder from division
-        max_K <- number.of.samples - remainder_n
-
-        while (cur_K <= max_K) {
-                cur_population <- population_list[[cur_pop_num]]
-                cur_sample <- dplyr::slice_sample(cur_population, n = n)
-                #print(cur_pop_num)
-                #print(cur_sample)
-
-                print(sprintf("Sample %1.0f: Pop num: %1.2f, mean = %1.2f",  cur_K, cur_pop_num, mean(cur_sample$height)))
-
-                cur_K <- cur_K + 1
-                cur_pop_num <- cur_pop_num + 1
-                if (cur_pop_num > number_pops) {
-                        cur_pop_num <- 1
-                }
+        if (number_pops>1) {
+                a = number_pops
         }
+        message(sprintf("Number of populations: %g", number_pops))
+        message(sprintf("Using a = %g", a))
+
+
+        k_vec <- seq(1:K)
+        method1_var <- rep(NA, K)
+        method2_var <- rep(NA, K)
+        var_ratio <- rep(NA,K)
+
+        for (cur_K in k_vec) {
+                a_vec <- seq(1, a)
+                a_mean_vec <- rep(NA, a)
+                a_var_vec <- rep(NA, a)
+                for (cur_a in a_vec) {
+                        cur_population <- population_list[[cur_a]]
+                        cur_sample <- dplyr::slice_sample(cur_population, n = n)
+                        a_mean_vec[cur_a] <- mean(cur_sample$height)
+                        a_var_vec[cur_a] <- var(cur_sample$height)
+                }
+
+                method1_var[cur_K] <- var(a_mean_vec)
+                mse <- mean(a_var_vec)
+                method2_var[cur_K] <- mse/n
+                var_ratio[cur_K] <- method1_var[cur_K]/method2_var[cur_K]
+        }
+
+        data.out <- data.frame(trial = k_vec,
+                               method_1_var_est = method1_var,
+                               method_2_clt_est = method2_var,
+                               var_ratio = var_ratio)
+        return(data.out)
 }
 
 
