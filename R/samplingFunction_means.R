@@ -262,14 +262,21 @@ get_mean_samples_ratio <-function(..., n = 5, a = 1, number.of.trials = 10) {
         var_ratio <- rep(NA,K)
 
         for (cur_K in k_vec) {
-                a_vec <- seq(1, a)
+                if (number_pops > 1) {
+                        a_vec <- seq(1, a)
+                } else {
+                        a_vec <- rep(1, a)
+                }
+
                 a_mean_vec <- rep(NA, a)
                 a_var_vec <- rep(NA, a)
+                a_count <- 0
                 for (cur_a in a_vec) {
+                        a_count <- a_count + 1
                         cur_population <- population_list[[cur_a]]
                         cur_sample <- dplyr::slice_sample(cur_population, n = n)
-                        a_mean_vec[cur_a] <- mean(cur_sample$height)
-                        a_var_vec[cur_a] <- var(cur_sample$height)
+                        a_mean_vec[a_count] <- mean(cur_sample$height)
+                        a_var_vec[a_count] <- var(cur_sample$height)
                 }
 
                 method1_var[cur_K] <- var(a_mean_vec)
