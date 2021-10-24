@@ -292,6 +292,52 @@ get_mean_samples_ratio <-function(..., n = 5, a = 1, number.of.trials = 10) {
         return(data.out)
 }
 
+#' @export
+get_mean_samples <-function(..., n = 5, a = 1, number.of.trials = 10) {
+        population_list <- list(...)
+        number_pops = length(population_list)
+        K <- round(number.of.trials/a)
+
+        if (number_pops>1) {
+                a = number_pops
+        }
+        message(sprintf("Number of populations: %g", number_pops))
+        message(sprintf("Using a = %g", a))
+        trial_vec <- seq(1:number.of.trials)
+        trial_mean <- rep(NA, number.of.trials)
+        trial_pop  <- rep(NA, number.of.trials)
+        k_vec <- seq(1:K)
+
+        cur_trial <- 1
+        for (cur_K in k_vec) {
+                if (number_pops > 1) {
+                        a_vec <- seq(1, a)
+                } else {
+                        a_vec <- rep(1, a)
+                }
+
+                a_mean_vec <- rep(NA, a)
+                a_var_vec <- rep(NA, a)
+                a_count <- 0
+                for (cur_a in a_vec) {
+                        a_count <- a_count + 1
+                        cur_population <- population_list[[cur_a]]
+                        cur_sample <- dplyr::slice_sample(cur_population, n = n)
+                        trial_mean[cur_trial] <- mean(cur_sample$height)
+                        trial_pop[cur_trial] <- cur_a
+                        cur_trial <- cur_trial + 1
+                        #a_mean_vec[a_count] <- mean(cur_sample$height)
+                        #a_var_vec[a_count] <- var(cur_sample$height)
+                }
+
+
+        }
+
+        data.out <- data.frame(trial = trial_vec,
+                               source_population = trial_pop,
+                               sample_mean = trial_mean)
+        return(data.out)
+}
 
 
 
