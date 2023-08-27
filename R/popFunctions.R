@@ -1,5 +1,6 @@
 #' @export
 var.pop <- function(x) {
+     #test comment
      N <- length(x)
      var.out <- var(x)*(N-1)/N
      return(var.out)
