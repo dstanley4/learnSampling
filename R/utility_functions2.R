@@ -1,3 +1,19 @@
+get_middle_percent <- function(sample_statistic, middle_percent = 80) {
+     middle_prop <- round(middle_percent/100,2)
+     start_prop <- (1 - middle_prop)/2
+     end_prop <-  1 - start_prop
+     sample_statistic = sort(sample_statistic)
+     n = length(sample_statistic)
+     xstart_n <- as.integer(n) * start_prop
+     xstart_n <- round(xstart_n + 1)
+     xstart_n <- as.integer(xstart_n)
+     xend_n <- as.integer(n * end_prop)
+     lower <- sample_statistic[xstart_n]
+     upper <- sample_statistic[xend_n]
+     output <- c(lower, upper)
+     return(output)
+}
+
 get_text_points <- function(data, text, binwidth, breaks, max_chars_per_column) {
 
   maxx <- max(data$x) + abs(.0000001*max(data$x))

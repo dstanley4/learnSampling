@@ -3,9 +3,13 @@
 #' @param n Sample size for all samples (range of sample size if two specified)
 #' @param number.of.samples Number of samples to obtain
 #' @param number.of.decimals Number of decimals to report in returned data frame
+#' @param seed.value random number seed value
 #' @return Data frame with sample correlations
 #' @export
-get_r_samples_from_population_data <- function(data = NA, n, number.of.samples = 10, number.of.decimals = 2) {
+get_r_samples_from_population_data <- function(data = NA, n, number.of.samples = 10, number.of.decimals = 2, seed.value = 1) {
+
+     set.seed(seed.value)
+
      rs <- rep(NA,number.of.samples)
      dfs <- rep(NA,number.of.samples)
      ts <- rep(NA,number.of.samples)
@@ -58,11 +62,14 @@ get_r_samples_from_population_data <- function(data = NA, n, number.of.samples =
 #' @param n Sample size for all samples If you use n, do not use n.min or n.max.
 #' @param number.of.samples Number of samples to obtain
 #' @param number.of.decimals Number of decimals to report in returned data frame
+#' @param seed.value random number seed value
 #' @return Data frame with sample correlations
 #' @examples
 #' get_r_samples(pop.r = .35,n=100)
 #' @export
-get_r_samples <- function(pop.r = NA, n, number.of.samples = 10, number.of.decimals = 3) {
+get_r_samples <- function(pop.r = NA, n, number.of.samples = 10, number.of.decimals = 3, seed.value = 1) {
+
+     set.seed(seed.value)
 
      Sigma <- diag(2)
      Sigma[1,2] <- pop.r

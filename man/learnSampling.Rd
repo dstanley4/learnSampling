@@ -2,6 +2,7 @@
 % Please edit documentation in R/packageDetails.R
 \docType{package}
 \name{learnSampling}
+\alias{learnSampling-package}
 \alias{learnSampling}
 \title{Create sampling demonstrations}
 \description{

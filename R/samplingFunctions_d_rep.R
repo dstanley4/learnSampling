@@ -3,14 +3,14 @@
 #' @param cell.n Cell size for both cells for all samples. If you use two values (e.g., c(20, 40), these represent -3/+3 SD for variable sample sizes
 #' @param number.of.samples Number of samples to obtain
 #' @param number.of.decimals Number of decimals to report in returned data frame
-#' @param var.equal TRUE/FALSE indicate type of t-test to use
 #' @param alternative indicates type of alternative hypothesis (e.g., "two.sided") for t.test
 #' @param seed.value random number seed value
 #' @return Data frame with sample d-values
 #' @examples
-#' get_d_samples(pop.d = .35, cell.n = 100)
+#' get_d_rep_samples(pop.d = .35, cell.n = 100)
 #' @export
-get_d_samples <- function(pop.d = NA, cell.n = NA, number.of.samples = 10, number.of.decimals = 3, var.equal = TRUE, alternative = "two.sided", seed.value = 1) {
+get_d_rep_samples <- function(pop.d = NA, cell.n = NA, number.of.samples = 10,
+                              number.of.decimals = 3, alternative = "two.sided", seed.value = 1) {
 
      set.seed(seed.value)
 
@@ -19,15 +19,15 @@ get_d_samples <- function(pop.d = NA, cell.n = NA, number.of.samples = 10, numbe
 
      if (length(cell.n) == 1) {
           ns.for.cell1 = rep(cell.n, number.of.samples)
-          ns.for.cell2 = rep(cell.n, number.of.samples)
      } else {
+          # if a range is specified in the cell.n then sample sizes are random based on that range
+          # the range is -3 to +3 SD for sample size
           cell.n <- sort(cell.n)
           cell.min <- cell.n[1]
           cell.max <- cell.n[2]
           cell.sd <- (cell.max  - cell.min) / 6
           cell.mean <- mean(cell.min, cell.max)
           ns.for.cell1 = abs(round(rnorm(mean = cell.mean, sd = cell.sd, n = number.of.samples)))
-          ns.for.cell2 = ns.for.cell1
      }
 
 
@@ -42,27 +42,25 @@ get_d_samples <- function(pop.d = NA, cell.n = NA, number.of.samples = 10, numbe
 
      for (i in 1:number.of.samples) {
           cell1.n <- ns.for.cell1[i]
-          cell2.n <- ns.for.cell2[i]
 
           group1.data <- rnorm(cell1.n) + pop.d
-          group2.data <- rnorm(cell2.n)
-          tout <- t.test(group1.data, group2.data, var.equal = var.equal, alternative = alternative)
+          tout <- t.test(group1.data, alternative = alternative)
 
           dfs[i] <- round(tout$parameter, number.of.decimals)
           ts[i] <- round(tout$statistic, number.of.decimals)
           ps[i] <- round(tout$p.value, number.of.decimals)
 
-          ciinfo <- MBESS::ci.smd(ncp = ts[i], n.1 = cell1.n, n.2 = cell2.n)
-          ds[i] <- round(ciinfo$smd, number.of.decimals)
+          ciinfo <- MBESS::ci.sm(ncp = ts[i], N = cell1.n)
+          ds[i] <- round(ciinfo$Standardized.Mean, number.of.decimals)
 
-          in_interval[i] <- is_value_in_interval(pop.d, c(ciinfo$Lower.Conf.Limit.smd, ciinfo$Upper.Conf.Limit.smd))
+          in_interval[i] <- is_value_in_interval(pop.d, c(ciinfo$Lower.Conf.Limit.Standardized.Mean, ciinfo$Upper.Conf.Limit.Standardized.Mean))
 
-          LLs[i] <- round(ciinfo$Lower.Conf.Limit.smd, number.of.decimals)
-          ULs[i] <- round(ciinfo$Upper.Conf.Limit.smd, number.of.decimals)
+          LLs[i] <- round(ciinfo$Lower.Conf.Limit.Standardized.Mean, number.of.decimals)
+          ULs[i] <- round(ciinfo$Upper.Conf.Limit.Standardized.Mean, number.of.decimals)
      }
      xx<-1:number.of.samples
      sample.number <- xx
-     data.out <- data.frame(sample.number, pop.d = pop.d, cell1.n = ns.for.cell1, cell2.n = ns.for.cell2, d = ds, LL = LLs, UL = ULs, ci.captured.pop.d = in_interval, t = ts, df = dfs, p = ps)
+     data.out <- data.frame(sample.number, pop.d = pop.d, cell1.n = ns.for.cell1, d = ds, LL = LLs, UL = ULs, ci.captured.pop.d = in_interval, t = ts, df = dfs, p = ps)
      rownames(data.out) <- NULL
 
      return(data.out)
@@ -79,7 +77,8 @@ get_d_samples <- function(pop.d = NA, cell.n = NA, number.of.samples = 10, numbe
 #' @param seed.value random number seed value
 #' @return Data frame with sample correlations
 #' @export
-get_d_samples_from_population_data <- function(pop1 = NULL, pop2 = NULL, cell.n, number.of.samples = 10, number.of.decimals = 2) {
+get_d_rep_samples_from_population_data <- function(pop1 = NULL, pop2 = NULL, cell.n,
+                                                   number.of.samples = 10, number.of.decimals = 2) {
 
         set.seed(2)
         if (is.null(pop1)) {return()}

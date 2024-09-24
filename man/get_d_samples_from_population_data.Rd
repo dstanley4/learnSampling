@@ -22,6 +22,8 @@ get_d_samples_from_population_data(
 \item{number.of.samples}{Number of samples to obtain}
 
 \item{number.of.decimals}{Number of decimals to report in returned data frame}
+
+\item{seed.value}{random number seed value}
 }
 \value{
 Data frame with sample correlations

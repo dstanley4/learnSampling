@@ -4,7 +4,13 @@
 \alias{get_r_samples}
 \title{Calculate a number of sample correlations based on a specified population correlation}
 \usage{
-get_r_samples(pop.r = NA, n, number.of.samples = 10, number.of.decimals = 3)
+get_r_samples(
+  pop.r = NA,
+  n,
+  number.of.samples = 10,
+  number.of.decimals = 3,
+  seed.value = 1
+)
 }
 \arguments{
 \item{pop.r}{Population correlation. Do not use pop.data is you provide this value.}
@@ -14,6 +20,8 @@ get_r_samples(pop.r = NA, n, number.of.samples = 10, number.of.decimals = 3)
 \item{number.of.samples}{Number of samples to obtain}
 
 \item{number.of.decimals}{Number of decimals to report in returned data frame}
+
+\item{seed.value}{random number seed value}
 }
 \value{
 Data frame with sample correlations

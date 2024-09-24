@@ -12,7 +12,8 @@ get_M_samples(
   n = 10,
   number.of.samples = 10,
   number.of.decimals = 2,
-  expanded.output = FALSE
+  expanded.output = FALSE,
+  seed.value = 1
 )
 }
 \arguments{
@@ -29,6 +30,8 @@ get_M_samples(
 \item{number.of.samples}{Number of samples to obtain}
 
 \item{number.of.decimals}{Number of decimals to report in returned data frame}
+
+\item{seed.value}{random number seed value}
 }
 \value{
 Data frame with desired properties

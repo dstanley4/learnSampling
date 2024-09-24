@@ -6,13 +6,14 @@
 #' @param n Cell size for both cells for all samples. If you use n, do not use n.min or n.max.
 #' @param number.of.samples Number of samples to obtain
 #' @param number.of.decimals Number of decimals to report in returned data frame
+#' @param seed.value random number seed value
 #' @return Data frame with desired properties
 #' @examples
 #' get_M_samples(pop.M = 100, pop.SD = 15, n = 100)
 #' @export
-get_M_samples <- function(pop.data = NULL, pop.column.name = NULL, pop.M = NA, pop.SD = NA, n = 10, number.of.samples = 10, number.of.decimals = 2, expanded.output = FALSE) {
+get_M_samples <- function(pop.data = NULL, pop.column.name = NULL, pop.M = NA, pop.SD = NA, n = 10, number.of.samples = 10, number.of.decimals = 2, expanded.output = FALSE, seed.value = 1) {
 
-     set.seed(1)
+     set.seed(seed.value)
 
      Ms <- rep(NA, number.of.samples)
      SDs <- rep(NA, number.of.samples)
@@ -286,8 +287,8 @@ get_mean_samples_ratio <-function(..., n = 5, a = 1, number.of.trials = 10) {
         }
 
         data.out <- data.frame(trial = k_vec,
-                               method_1_var_est = method1_var,
-                               method_2_clt_est = method2_var,
+                               method_1_obs_var_est = method1_var,
+                               method_2_exp_var_est = method2_var,
                                var_ratio = var_ratio)
         return(data.out)
 }
